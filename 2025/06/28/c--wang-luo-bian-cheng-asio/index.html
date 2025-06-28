@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="hello world, Jerry">
-    <meta name="description" content="">
+    <meta name="keywords" content="C++网络编程asio一, Jerry">
+    <meta name="description" content="学习asio网络编程的一些记录与整理">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>hello world | Jerry</title>
+    <title>C++网络编程asio一 | Jerry</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -288,12 +288,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/20.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">hello world</h1>
+                    <h1 class="description center-align post-title">C++网络编程asio一</h1>
                 </div>
             </div>
         </div>
@@ -315,12 +315,33 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/C/">
+                                <span class="chip bg-color">C++</span>
+                            </a>
+                        
+                            <a href="/tags/asio/">
+                                <span class="chip bg-color">asio</span>
+                            </a>
+                        
+                            <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">
+                                <span class="chip bg-color">网络编程</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/C-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" class="post-category">
+                                C++网络编程
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -329,7 +350,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2025-06-27
+                    2025-06-28
                 </div>
                 
 
@@ -338,7 +359,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    0
+                    3k
                 </div>
                 
 
@@ -355,7 +376,189 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                
+                <h1 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h1><p>整体的学习体验来说，asio是网络编程的一个应用，如果还没有学习过计算机网络，也可以学习，但对于其中的一些概念可能会觉得一头雾水，私以为这对于学习是不利，起码就个人感觉而言。本博客是我的一个学习过程记录以复习用，可能存在一些错误！学习参考了<a target="_blank" rel="noopener" href="https://mmoaay.gitbooks.io/boost-asio-cpp-network-programming-chinese/content/">ref1</a>、<a target="_blank" rel="noopener" href="https://llfc.club/category?catid=225RaiVNI8pFDD5L4m807g7ZwmF#!aid/2LfzYBkRCfdEDrtE6hWz8VrCLoS">ref2</a>.</p>
+<h1 id="1、计网基础"><a href="#1、计网基础" class="headerlink" title="1、计网基础"></a>1、计网基础</h1><p>1）计算机网络模型</p>
+<p><img src="C:\Users\TJR\Desktop\blog\source_posts\C++-网络编程asio\SouthEast.png" alt="img"></p>
+<p><img src="C:\Users\TJR\Desktop\blog\source_posts\C++-网络编程asio\SouthEast.png" alt="img"></p>
+<h1 id="2、asio编译"><a href="#2、asio编译" class="headerlink" title="2、asio编译"></a>2、asio编译</h1><p>asio是C++扩展库Boost中的一个部分，你可以选择部分编译，即仅编译asio及其依赖的库，我的实践是完整编译Boost，网上教程很多，我的安装实践参考了该<a target="_blank" rel="noopener" href="https://blog.csdn.net/LostUnravel/article/details/127076377">博客</a>。值得一提的是，我是在Windows下gcc编译(<del>这显然是愚蠢的决定，此决定主要是为了使用Clion</del>)，过程非常麻烦，推荐使用VS(<del>宇宙第一IDE还是强</del>)，或者在Linux环境下编译。此处给出Clion的CMakeLists.txt文件。</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">project</span>(asio)</span><br><span class="line"><span class="keyword">cmake_policy</span>(<span class="keyword">SET</span> CMP0144 NEW)</span><br><span class="line"><span class="comment"># 设置 C++11 标准</span></span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_STANDARD <span class="number">11</span>)</span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_STANDARD_REQUIRED <span class="keyword">ON</span>)</span><br><span class="line"><span class="comment"># 指定 Boost 路径（根据实际安装路径修改）</span></span><br><span class="line"><span class="keyword">find_package</span>(Boost <span class="number">1.82</span>.<span class="number">0</span> REQUIRED COMPONENTS system)</span><br><span class="line"><span class="comment"># 生成可执行文件</span></span><br><span class="line"><span class="keyword">add_executable</span>(asio main.cpp)</span><br><span class="line"><span class="comment"># 链接 Boost 库</span></span><br><span class="line"><span class="keyword">target_link_libraries</span>(asio PUBLIC Boost::system)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (WIN32)</span><br><span class="line">    <span class="keyword">target_link_libraries</span>(asio PRIVATE ws2_32)</span><br><span class="line">    <span class="keyword">target_link_libraries</span>(asio PRIVATE mswsock)</span><br><span class="line"><span class="comment">#message(&quot;IN WIN32&quot;)</span></span><br><span class="line"><span class="keyword">endif</span>()</span><br></pre></td></tr></table></figure>
+
+<h1 id="3、asio简介"><a href="#3、asio简介" class="headerlink" title="3、asio简介"></a>3、asio简介</h1><p>Boost.Asio是一个跨平台的、主要用于网络和其他一些底层输入&#x2F;输出编程的C++库。Boost.Asio在网络通信、COM串行端口和文件上成功地抽象了输入输出的概念。你可以基于这些进行同步或者异步的输入输出编程。它提供了一套可以支持传输控制协议(TCP)socket、用户数据报协议(UDP)socket和Internet控制消息协议(IMCP)socket的API，而且如果有需要，你可以对其进行扩展以支持你自己的协议。</p>
+<h1 id="4、同步与异步"><a href="#4、同步与异步" class="headerlink" title="4、同步与异步"></a>4、同步与异步</h1><p>在同步编程中，所有的操作都是顺序执行的，比如从socket中读取（请求），然后写入（回应）到socket中。每一个操作都是阻塞的。因为操作是阻塞的，所以为了不影响主程序，当在socket上读写时，通常会创建一个或多个线程来处理socket的输入&#x2F;输出。因此，同步的服务端&#x2F;客户端通常是多线程的。</p>
+<p>相反的，异步编程是事件驱动的。虽然启动了一个操作，但是你不知道它何时会结束；它只是提供一个回调给你，当操作结束时，它会调用这个API，并返回操作结果。</p>
+<p>asio异步与同步接口。</p>
+<h1 id="5、asio基础"><a href="#5、asio基础" class="headerlink" title="5、asio基础"></a>5、asio基础</h1><h2 id="1-boost-asio命名空间"><a href="#1-boost-asio命名空间" class="headerlink" title="1) boost.asio命名空间"></a>1) boost.asio命名空间</h2><p>刚开始学可能会比较陌生，先学后面再来看就很清晰了。</p>
+<p>Boost.Asio的所有内容都包含在boost::asio命名空间或者其子命名空间内。</p>
+<ul>
+<li><em>boost::asio</em>：这是核心类和函数所在的地方。重要的类有io_service和streambuf。类似<em>read, read_at, read_until</em>方法，它们的异步方法，它们的写方法和异步写方法等自由函数也在这里。</li>
+<li><em>boost::asio::ip</em>：这是网络通信部分所在的地方。重要的类有<em>address, endpoint, tcp, udp和icmp</em>，重要的自由函数有<em>connect</em>和<em>async_connect</em>。要注意的是在<em>boost::asio::ip::tcp::socket</em>中间，<em>socket</em>只是<em>boost::asio::ip::tcp</em>类中间的一个<em>typedef</em>关键字。</li>
+<li><em>boost::asio::error</em>：这个命名空间包含了调用I&#x2F;O例程时返回的错误码</li>
+<li><em>boost::asio::ssl</em>：包含了SSL处理类的命名空间</li>
+<li><em>boost::asio::local</em>：这个命名空间包含了POSIX特性的类</li>
+<li><em>boost::asio::windows</em>：这个命名空间包含了Windows特性的类</li>
+</ul>
+<h2 id="2-IP地址"><a href="#2-IP地址" class="headerlink" title="2) IP地址"></a>2) IP地址</h2><p>对于IP地址的处理，Boost.Asio提供了<em>ip::address , ip::address_v4</em>和<em>ip::address_v6</em>类。 它们提供了相当多的函数。下面列出了最重要的几个：</p>
+<ul>
+<li><em>ip::address(v4_or_v6_address)</em>:这个函数把一个v4或者v6的地址转换成<em>ip::address</em></li>
+<li><em>ip::address:from_string(str)</em>：这个函数根据一个IPv4地址（用.隔开的）或者一个IPv6地址（十六进制表示）创建一个地址。</li>
+<li><em>ip::address::to_string()</em> ：这个函数返回这个地址的字符串。</li>
+<li><em>ip::address_v4::broadcast([addr, mask])</em>:这个函数创建了一个广播地址 <em>ip::address_v4::any()</em>：这个函数返回一个能表示任意地址的地址。</li>
+<li><em>ip::address_v4::loopback(), ip_address_v6::loopback()</em>：这个函数返回环路地址（为v4&#x2F;v6协议）</li>
+<li><em>ip::host_name()</em>：这个函数用string数据类型返回当前的主机名。</li>
+</ul>
+<p>创建一个ip地址的例子：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//旧版</span></span><br><span class="line">ip::address addr = ip::address::<span class="built_in">from_string</span>(<span class="string">&quot;127.0.0.1&quot;</span>);</span><br><span class="line"><span class="comment">//新版</span></span><br><span class="line">ip::address addr = asio::ip::<span class="built_in">make_address</span>(<span class="string">&quot;127.0.0.1&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>from_string无法使用域名来创建，比如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 抛出异常</span></span><br><span class="line">ip::address addr = ip::address::<span class="built_in">from_string</span>(<span class="string">&quot;www.yahoo.com&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-端点"><a href="#3-端点" class="headerlink" title="3) 端点"></a>3) 端点</h2><p>端点是使用某个端口连接到的一个地址。不同类型的socket有它自己的<em>endpoint</em>类，比如<em>ip::tcp::endpoint、ip::udp::endpoint</em>和<em>ip::icmp::endpoint</em>。你可以简单理解计算机的一个端口，计网中用端口标识应用进程实现端到端的通信。</p>
+<p>创建一个连接到本机的80端口的端点，可以这样：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip::<span class="function">tcp::endpoint <span class="title">ep</span><span class="params">( addr, <span class="number">80</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>有三种方式来让你建立一个端点：</p>
+<ul>
+<li><em>endpoint()</em>：这是默认构造函数，某些时候可以用来创建UDP&#x2F;ICMP socket。</li>
+<li><em>endpoint(protocol, port)</em>：这个方法通常用来创建可以接受新连接的服务器端socket。</li>
+<li><em>endpoint(addr, port)</em>:这个方法创建了一个连接到某个地址和端口的端点。</li>
+</ul>
+<p>例子如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip::tcp::endpoint ep1;</span><br><span class="line">ip::<span class="function">tcp::endpoint <span class="title">ep2</span><span class="params">(ip::tcp::v4(), <span class="number">80</span>)</span></span>;</span><br><span class="line">ip::<span class="function">tcp::endpoint <span class="title">ep3</span><span class="params">( addr, <span class="number">80</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-套接字"><a href="#4-套接字" class="headerlink" title="4) 套接字"></a>4) 套接字</h2><p>套接字也就是socket，我们知道可以用ip+协议+端口来标识网络中的一个进程，所谓socket就是在应用层和传输层之间的一个抽象层，它把TCP&#x2F;IP层复杂的操作抽象为几个简单的接口供应用层调用已实现进程在网络中通信。</p>
+<p><img src="C:\Users\TJR\Desktop\blog\source_posts\C++-网络编程asio\05225723-2ffa89aad91f46099afa530ef8660b20.jpg" alt="img"></p>
+<p>Boost.Asio有三种类型的套接字类：<em>ip::tcp, ip::udp</em>和<em>ip::icmp</em>。<em>socket</em>类创建一个相应的<em>socket</em>。而且总是在构造的时候传入io_service实例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">io_context context;</span><br><span class="line">ip::<span class="function">udp::socket <span class="title">sock</span><span class="params">(service)</span></span></span><br><span class="line"><span class="function">sock.<span class="title">set_option</span><span class="params">(ip::udp::socket::reuse_address(<span class="literal">true</span>))</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>每一个socket的名字都是一个typedef关键字，tcp面向字节流，udp面向报文：</p>
+<ul>
+<li><em>ip::tcp::socket &#x3D; basic_stream_socket</em></li>
+<li><em>ip::udp::socket &#x3D; basic_datagram_socket</em></li>
+<li><em>ip::icmp::socket &#x3D; basic_raw_socket</em></li>
+</ul>
+<h2 id="5-socket成员函数"><a href="#5-socket成员函数" class="headerlink" title="5)socket成员函数"></a>5)socket成员函数</h2><p>函数很多，记不住，熟能生巧，记录当查阅用</p>
+<h3 id="·-接相关的函数"><a href="#·-接相关的函数" class="headerlink" title="· 接相关的函数"></a>· 接相关的函数</h3><p>这些方法是用来连接或绑定socket、断开socket字连接以及查询连接是活动还是非活动的：</p>
+<ul>
+<li><em>assign(protocol,socket)</em>：这个函数分配了一个原生的socket给这个socket实例。当处理老（旧）程序时会使用它（也就是说，原生socket已经被建立了）</li>
+<li><em>open(protocol)</em>：这个函数用给定的IP协议（v4或者v6）打开一个socket。你主要在UDP&#x2F;ICMP socket，或者服务端socket上使用。</li>
+<li><em>bind(endpoint)</em>：这个函数绑定到一个地址</li>
+<li><em>connect(endpoint)</em>：这个函数用同步的方式连接到一个地址</li>
+<li><em>async_connect(endpoint)</em>：这个函数用异步的方式连接到一个地址</li>
+<li><em>is_open()</em>：如果套接字已经打开，这个函数返回true</li>
+<li><em>close()</em>：这个函数用来关闭套接字。调用时这个套接字上任何的异步操作都会被立即关闭，同时返回<em>error::operation_aborted</em>错误码。</li>
+<li><em>shutdown(type_of_shutdown)</em>：这个函数立即使send或者receive操作失效，或者两者都失效。</li>
+<li><em>cancel()</em>：这个函数取消套接字上所有的异步操作。这个套接字上任何的异步操作都会立即结束，然后返回<em>error::operation_aborted</em>错误码。</li>
+</ul>
+<h3 id="读写函数"><a href="#读写函数" class="headerlink" title="读写函数"></a>读写函数</h3><p>这些是在套接字上执行I&#x2F;O操作的函数。</p>
+<p>对于异步函数来说，回调函数的格式*void handler(const boost::system::error_code&amp; e, size_t bytes)*都是一样的</p>
+<ul>
+<li><em>async_receive(buffer, [flags,] handler)</em>：这个函数启动从套接字异步接收数据的操作。</li>
+<li><em>async_read_some(buffer,handler)</em>：这个函数和*async_receive(buffer, handler)*功能一样。</li>
+<li><em>async_receive_from(buffer, endpoint[, flags], handler)</em>：这个函数启动从一个指定端点异步接收数据的操作。</li>
+<li><em>async_send(buffer [, flags], handler)</em>：这个函数启动了一个异步发送缓冲区数据的操作。</li>
+<li><em>async_write_some(buffer, handler)</em>：这个函数和a*sync_send(buffer, handler)*功能一致。</li>
+<li><em>async_send_to(buffer, endpoint, handler)</em>：这个函数启动了一个异步send缓冲区数据到指定端点的操作。</li>
+<li><em>receive(buffer [, flags])</em>：这个函数异步地从所给的缓冲区读取数据。在读完所有数据或者错误出现之前，这个函数都是阻塞的。</li>
+<li><em>read_some(buffer)</em>：这个函数的功能和*receive(buffer)*是一致的。</li>
+<li>receive_from(buffer, endpoint [, flags])*：这个函数异步地从一个指定的端点获取数据并写入到给定的缓冲区。在读完所有数据或者错误出现之前，这个函数都是阻塞的。</li>
+<li><em>send(buffer [, flags])</em>：这个函数同步地发送缓冲区的数据。在所有数据发送成功或者出现错误之前，这个函数都是阻塞的。</li>
+<li><em>write_some(buffer)</em>：这个函数和*send(buffer)*的功能一致。</li>
+<li><em>send_to(buffer, endpoint [, flags])</em>：这个函数同步地把缓冲区数据发送到一个指定的端点。在所有数据发送成功或者出现错误之前，这个函数都是阻塞的。</li>
+<li><em>available()</em>：这个函数返回有多少字节的数据可以无阻塞地进行同步读取。</li>
+</ul>
+<p>其中标记的默认值是0，但是也可以是以下几种：</p>
+<ul>
+<li><em>ip::socket_type::socket::message_peek</em>：这个标记只监测并返回某个消息，但是下一次读消息的调用会重新读取这个消息。</li>
+<li><em>ip::socket_type::socket::message_out_of_band</em>：这个标记处理带外（OOB）数据，OOB数据是被标记为比正常数据更重要的数据。关</li>
+<li><em>ip::socket_type::socket::message_do_not_route</em>：这个标记指定数据不使用路由表来发送。</li>
+<li><em>ip::socket_type::socket::message_end_of_record</em>：这个标记指定的数据标识了记录的结束。在Windows下不支持。</li>
+</ul>
+<h3 id="套接字控制"><a href="#套接字控制" class="headerlink" title="套接字控制"></a>套接字控制</h3><p>这些函数用来处理套接字的高级选项：</p>
+<ul>
+<li><em>get_io_service()</em>：这个函数返回构造函数中传入的io_service实例</li>
+<li><em>get_option(option)</em>：这个函数返回一个套接字的属性</li>
+<li><em>set_option(option)</em>：这个函数设置一个套接字的属性</li>
+<li><em>io_control(cmd)</em>：这个函数在套接字上执行一个I&#x2F;O指令</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>名字</th>
+<th>描述</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>broadcast</td>
+<td>如果为true，允许广播消息</td>
+<td>bool</td>
+</tr>
+<tr>
+<td>debug</td>
+<td>如果为true，启用套接字级别的调试</td>
+<td>bool</td>
+</tr>
+<tr>
+<td>do_not_route</td>
+<td>如果为true，则阻止路由选择只使用本地接口</td>
+<td>bool</td>
+</tr>
+<tr>
+<td>enable_connection_aborted</td>
+<td>如果为true，记录在accept()时中断的连接</td>
+<td>bool</td>
+</tr>
+<tr>
+<td>keep_alive</td>
+<td>如果为true，会发送心跳</td>
+<td>bool</td>
+</tr>
+<tr>
+<td>linger</td>
+<td>如果为true，套接字会在有未发送数据的情况下挂起close()</td>
+<td>bool</td>
+</tr>
+<tr>
+<td>receive_buffer_size</td>
+<td>套接字接收缓冲区大小</td>
+<td>int</td>
+</tr>
+<tr>
+<td>receive_low_watemark</td>
+<td>规定套接字输入处理的最小字节数</td>
+<td>int</td>
+</tr>
+<tr>
+<td>reuse_address</td>
+<td>如果为true，套接字能绑定到一个已用的地址</td>
+<td>bool</td>
+</tr>
+<tr>
+<td>send_buffer_size</td>
+<td>套接字发送缓冲区大小</td>
+<td>int</td>
+</tr>
+<tr>
+<td>send_low_watermark</td>
+<td>规定套接字数据发送的最小字节数</td>
+<td>int</td>
+</tr>
+<tr>
+<td>ip::v6_only</td>
+<td>如果为true，则只允许IPv6的连接</td>
+<td>bool</td>
+</tr>
+</tbody></table>
+<h3 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h3><p>其他与连接和I&#x2F;O无关的函数如下：</p>
+<ul>
+<li><em>local_endpoint()</em>：这个方法返回套接字本地连接的地址。</li>
+<li><em>remote_endpoint()</em>：这个方法返回套接字连接到的远程地址。</li>
+<li><em>native_handle()</em>：这个方法返回原始套接字的处理程序。你只有在调用一个Boost.Asio不支持的原始方法时才需要用到它。</li>
+<li><em>non_blocking()</em>：如果套接字是非阻塞的，这个方法返回true，否则false。</li>
+<li><em>native_non_blocking()</em>：如果套接字是非阻塞的，这个方法返回true，否则返回false。但是，它是基于原生的套接字来调用本地的api。所以通常来说，你不需要调用这个方法（non_blocking()已经缓存了这个结果）；你只有在直接调用native_handle()这个方法的时候才需要用到这个方法。</li>
+<li><em>at_mark()</em>：如果套接字要读的是一段OOB数据，这个方法返回true。这个方法你很少会用到。</li>
+</ul>
+
                 
             </div>
             <hr/>
@@ -381,7 +584,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://syjerry.github.io/2025/06/27/hello-world/">https://syjerry.github.io/2025/06/27/hello-world/</a>
+                    <a href="https://syjerry.github.io/2025/06/28/c--wang-luo-bian-cheng-asio/">https://syjerry.github.io/2025/06/28/c--wang-luo-bian-cheng-asio/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -418,7 +621,19 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/C/">
+                                    <span class="chip bg-color">C++</span>
+                                </a>
+                            
+                                <a href="/tags/asio/">
+                                    <span class="chip bg-color">asio</span>
+                                </a>
+                            
+                                <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">
+                                    <span class="chip bg-color">网络编程</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -462,9 +677,10 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2025/06/28/c--wang-luo-bian-cheng-asio/">
                     <div class="card-image">
@@ -482,9 +698,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2025-06-28
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2025-06-28
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -497,6 +713,7 @@
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -520,7 +737,7 @@
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
                 <a href="/2025/06/27/hello-world/">
@@ -550,7 +767,6 @@
                         </span>
                     </div>
                 </div>
-
                 
             </div>
         </div>
