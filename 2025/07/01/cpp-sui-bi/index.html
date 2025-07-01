@@ -392,7 +392,6 @@
 constexpr double PI &#x3D; 3.1415926;      &#x2F;&#x2F; 浮点数
 constexpr const char* NAME &#x3D; &quot;C++&quot;;   &#x2F;&#x2F; 字符串字面量</code></pre>
 
-<hr>
 <h3 id="constexpr函数"><a href="#constexpr函数" class="headerlink" title="constexpr函数"></a>constexpr函数</h3><p>C++11初次引入常量表达式，对constexpr函数限制比较严格，仅允许包含<strong>单个return语句</strong>，仅能返回<strong>字面类型（Literal Type）</strong>（如 <code>int</code>、<code>float</code>、<code>constexpr</code> 对象等），不能返回void,不能有<strong>分支、循环</strong>，允许使用<strong>三元运算符?:和递归</strong>。</p>
 <pre class="language-cpp" data-language="cpp"><code class="language-cpp">constexpr int factorial(int n) &#123;
     return n &lt;&#x3D; 1 ? 1 : n * factorial(n - 1);
@@ -424,6 +423,7 @@ constexpr auto get_value(T t) &#123;
 constexpr auto square &#x3D; [](int x) &#123; return x * x; &#125;;
 constexpr int x &#x3D; square(5); &#x2F;&#x2F; 25</code></pre>
 
+<hr>
 <p>C++20新增加关键字**<code>consteval</code>**强制编译期执行，允许 <code>new</code> 和 <code>delete</code>（但必须完全在编译期管理），<code>std::vector</code>、<code>std::string</code> 等支持 <code>constexpr</code>（但生命周期必须限于编译期）。</p>
 <pre class="language-cpp" data-language="cpp"><code class="language-cpp">consteval int strict_square(int x) &#123; return x * x; &#125;
 constexpr int x &#x3D; strict_square(5); &#x2F;&#x2F; OK
