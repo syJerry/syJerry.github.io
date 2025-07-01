@@ -386,19 +386,21 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h1><p>目前C++发展迅速，现代C++已与过去有极大的不同，在不断的发展中我们也需要不断的学习，此篇将记录一些我认为可能平时可能用到或需要用到的一些C++语法糖。</p>
-<h1 id="常量表达式（constant-expression）"><a href="#常量表达式（constant-expression）" class="headerlink" title="常量表达式（constant expression）"></a>常量表达式（constant expression）</h1><p>指在编译时就能计算出结果的表达式。C++11引入了<code>constexpr</code>关键字来显式定义常量表达式。</p>
-<h2 id="consexpr变量"><a href="#consexpr变量" class="headerlink" title="consexpr变量"></a>consexpr变量</h2><pre class="language-Cpp" data-language="Cpp"><code class="language-Cpp">constexpr int MAX_SIZE &#x3D; 100;         &#x2F;&#x2F; 基本类型
+                <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>目前C++发展迅速，现代C++已与过去有极大的不同，在不断的发展中我们也需要不断的学习，此篇将记录一些我认为可能平时可能用到或需要用到的一些C++语法糖。</p>
+<h2 id="常量表达式（constant-expression）"><a href="#常量表达式（constant-expression）" class="headerlink" title="常量表达式（constant expression）"></a>常量表达式（constant expression）</h2><p>指在编译时就能计算出结果的表达式。C++11引入了<code>constexpr</code>关键字来显式定义常量表达式。</p>
+<h3 id="consexpr变量"><a href="#consexpr变量" class="headerlink" title="consexpr变量"></a>consexpr变量</h3><pre class="language-Cpp" data-language="Cpp"><code class="language-Cpp">constexpr int MAX_SIZE &#x3D; 100;         &#x2F;&#x2F; 基本类型
 constexpr double PI &#x3D; 3.1415926;      &#x2F;&#x2F; 浮点数
 constexpr const char* NAME &#x3D; &quot;C++&quot;;   &#x2F;&#x2F; 字符串字面量</code></pre>
 
-<h2 id="constexpr函数"><a href="#constexpr函数" class="headerlink" title="constexpr函数"></a>constexpr函数</h2><p>C++11初次引入常量表达式，对constexpr函数限制比较严格，仅允许包含<strong>单个return语句</strong>，仅能返回<strong>字面类型（Literal Type）</strong>（如 <code>int</code>、<code>float</code>、<code>constexpr</code> 对象等），不能返回void,不能有<strong>分支、循环</strong>，允许使用<strong>三元运算符?:和递归</strong>。</p>
+<hr>
+<h3 id="constexpr函数"><a href="#constexpr函数" class="headerlink" title="constexpr函数"></a>constexpr函数</h3><p>C++11初次引入常量表达式，对constexpr函数限制比较严格，仅允许包含<strong>单个return语句</strong>，仅能返回<strong>字面类型（Literal Type）</strong>（如 <code>int</code>、<code>float</code>、<code>constexpr</code> 对象等），不能返回void,不能有<strong>分支、循环</strong>，允许使用<strong>三元运算符?:和递归</strong>。</p>
 <pre class="language-cpp" data-language="cpp"><code class="language-cpp">constexpr int factorial(int n) &#123;
     return n &lt;&#x3D; 1 ? 1 : n * factorial(n - 1);
 &#125;
 &#x2F;&#x2F; 编译时计算
 constexpr int fact_5 &#x3D; factorial(5);  &#x2F;&#x2F; 120</code></pre>
 
+<hr>
 <p>C++14中允许使用多行语句，可以使用控制语句与定义局部变量(但不能是静态变量)，允许返回非 <code>const</code> 对象（只要它本身是 <code>constexpr</code> 构造的），允许 <code>void</code> 返回类型（但必须返回 <code>void</code>），开始支持std::max,std::min等库函数。</p>
 <pre class="language-cpp" data-language="cpp"><code class="language-cpp">constexpr int count_zeros(int n) &#123;
     int count &#x3D; 0; &#x2F;&#x2F; 允许局部变量
@@ -409,6 +411,7 @@ constexpr int fact_5 &#x3D; factorial(5);  &#x2F;&#x2F; 120</code></pre>
     return count;
 &#125;</code></pre>
 
+<hr>
 <p>C++17新增**<code>if constexpr</code>（编译期条件分支）**，允许在模板和 <code>constexpr</code> 函数中使用编译期条件判断，并新增Lambda 表达式可以是 <code>constexpr</code>。</p>
 <pre class="language-cpp" data-language="cpp"><code class="language-cpp">template &lt;typename T&gt;
 constexpr auto get_value(T t) &#123;
