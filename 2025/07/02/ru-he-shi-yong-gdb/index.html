@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="C++网络编程asio一, Jerry">
-    <meta name="description" content="学习asio网络编程的一些记录与整理">
+    <meta name="keywords" content="如何使用GDB, Jerry">
+    <meta name="description" content="概述GDB时Linux下常用的调试工具，常用来调试C&amp;#x2F;C++程序，如果要使用GDB调试需要在编译时，编译debug版本，gcc&amp;#x2F;g++添加**-g**选项，或者在CMakeLists.txt中添加set(CMAKE_BU">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>C++网络编程asio一 | Jerry</title>
+    <title>如何使用GDB | Jerry</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
     <style>
@@ -297,12 +297,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/15.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">C++网络编程asio一</h1>
+                    <h1 class="description center-align post-title">如何使用GDB</h1>
                 </div>
             </div>
         </div>
@@ -326,16 +326,12 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/C/">
-                                <span class="chip bg-color">C++</span>
+                            <a href="/tags/GDB/">
+                                <span class="chip bg-color">GDB</span>
                             </a>
                         
-                            <a href="/tags/asio/">
-                                <span class="chip bg-color">asio</span>
-                            </a>
-                        
-                            <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">
-                                <span class="chip bg-color">网络编程</span>
+                            <a href="/tags/%E7%A8%8B%E5%BA%8F%E8%B0%83%E8%AF%95/">
+                                <span class="chip bg-color">程序调试</span>
                             </a>
                         
                     </div>
@@ -346,8 +342,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/C-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" class="post-category">
-                                C++网络编程
+                            <a href="/categories/GDB/" class="post-category">
+                                GDB
                             </a>
                         
                     </div>
@@ -359,7 +355,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2025-06-28
+                    2025-07-02
                 </div>
                 
 
@@ -368,7 +364,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    3.1k
+                    866
                 </div>
                 
 
@@ -389,210 +385,92 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>整体的学习体验来说，asio是网络编程的一个应用，如果还没有学习过计算机网络，也可以学习，但对于其中的一些概念可能会觉得一头雾水，私以为这对于学习是不利，起码就个人感觉而言。本博客是我的一个学习过程记录以复习用，可能存在一些错误！学习参考了<a target="_blank" rel="noopener" href="https://mmoaay.gitbooks.io/boost-asio-cpp-network-programming-chinese/content/">ref1</a>、<a target="_blank" rel="noopener" href="https://llfc.club/category?catid=225RaiVNI8pFDD5L4m807g7ZwmF#!aid/2LfzYBkRCfdEDrtE6hWz8VrCLoS">ref2</a>.</p>
-<h3 id="1、计网基础"><a href="#1、计网基础" class="headerlink" title="1、计网基础"></a>1、计网基础</h3><p>1）计算机网络模型</p>
-<p><img src="/2025/06/28/c-wang-luo-bian-cheng-asio/SouthEast.png"></p>
-<h3 id="2、asio编译"><a href="#2、asio编译" class="headerlink" title="2、asio编译"></a>2、asio编译</h3><p>asio是C++扩展库Boost中的一个部分，你可以选择部分编译，即仅编译asio及其依赖的库，我的实践是完整编译Boost，网上教程很多，我的安装实践参考了该<a target="_blank" rel="noopener" href="https://blog.csdn.net/LostUnravel/article/details/127076377">博客</a>。值得一提的是，我是在Windows下gcc编译(<del>这显然是愚蠢的决定，此决定主要是为了使用Clion</del>)，过程非常麻烦，推荐使用VS(<del>宇宙第一IDE还是强</del>)，或者在Linux环境下编译。此处给出Clion的CMakeLists.txt文件。</p>
-<pre class="language-cmake" data-language="cmake"><code class="language-cmake">project(asio)
-cmake_policy(SET CMP0144 NEW)
-# 设置 C++11 标准
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# 指定 Boost 路径（根据实际安装路径修改）
-find_package(Boost 1.82.0 REQUIRED COMPONENTS system)
-# 生成可执行文件
-add_executable(asio main.cpp)
-# 链接 Boost 库
-target_link_libraries(asio PUBLIC Boost::system)
+                <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>GDB时Linux下常用的调试工具，常用来调试C&#x2F;C++程序，如果要使用GDB调试需要在编译时，编译debug版本，gcc&#x2F;g++添加**-g**选项，或者在CMakeLists.txt中添加set(CMAKE_BUILD_TYPE Debug)。下面给出此篇测试用代码</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;cstdlib&gt;
 
-if (WIN32)
-    target_link_libraries(asio PRIVATE ws2_32)
-    target_link_libraries(asio PRIVATE mswsock)
-#message(&quot;IN WIN32&quot;)
-endif()</code></pre>
+&#x2F;&#x2F; 函数声明
+int fibonacci(int n);
+void modifyPointer(int* ptr);
+void triggerSegfault();
 
-<h3 id="3、asio简介"><a href="#3、asio简介" class="headerlink" title="3、asio简介"></a>3、asio简介</h3><p>Boost.Asio是一个跨平台的、主要用于网络和其他一些底层输入&#x2F;输出编程的C++库。Boost.Asio在网络通信、COM串行端口和文件上成功地抽象了输入输出的概念。你可以基于这些进行同步或者异步的输入输出编程。它提供了一套可以支持传输控制协议(TCP)socket、用户数据报协议(UDP)socket和Internet控制消息协议(IMCP)socket的API，而且如果有需要，你可以对其进行扩展以支持你自己的协议。</p>
-<h3 id="4、同步与异步"><a href="#4、同步与异步" class="headerlink" title="4、同步与异步"></a>4、同步与异步</h3><p>在同步编程中，所有的操作都是顺序执行的，比如从socket中读取（请求），然后写入（回应）到socket中。每一个操作都是阻塞的。因为操作是阻塞的，所以为了不影响主程序，当在socket上读写时，通常会创建一个或多个线程来处理socket的输入&#x2F;输出。因此，同步的服务端&#x2F;客户端通常是多线程的。</p>
-<p>相反的，异步编程是事件驱动的。虽然启动了一个操作，但是你不知道它何时会结束；它只是提供一个回调给你，当操作结束时，它会调用这个API，并返回操作结果。</p>
-<p>asio异步与同步接口。</p>
-<h3 id="5、asio基础"><a href="#5、asio基础" class="headerlink" title="5、asio基础"></a>5、asio基础</h3><h4 id="1-boost-asio命名空间"><a href="#1-boost-asio命名空间" class="headerlink" title="1) boost.asio命名空间"></a>1) boost.asio命名空间</h4><p>刚开始学可能会比较陌生，先学后面再来看就很清晰了。</p>
-<p>Boost.Asio的所有内容都包含在boost::asio命名空间或者其子命名空间内。</p>
-<ul>
-<li><em>boost::asio</em>：这是核心类和函数所在的地方。重要的类有io_service和streambuf。类似<em>read, read_at, read_until</em>方法，它们的异步方法，它们的写方法和异步写方法等自由函数也在这里。</li>
-<li><em>boost::asio::ip</em>：这是网络通信部分所在的地方。重要的类有<em>address, endpoint, tcp, udp和icmp</em>，重要的自由函数有<em>connect</em>和<em>async_connect</em>。要注意的是在<em>boost::asio::ip::tcp::socket</em>中间，<em>socket</em>只是<em>boost::asio::ip::tcp</em>类中间的一个<em>typedef</em>关键字。</li>
-<li><em>boost::asio::error</em>：这个命名空间包含了调用I&#x2F;O例程时返回的错误码</li>
-<li><em>boost::asio::ssl</em>：包含了SSL处理类的命名空间</li>
-<li><em>boost::asio::local</em>：这个命名空间包含了POSIX特性的类</li>
-<li><em>boost::asio::windows</em>：这个命名空间包含了Windows特性的类</li>
-</ul>
-<h4 id="2-IP地址"><a href="#2-IP地址" class="headerlink" title="2) IP地址"></a>2) IP地址</h4><p>对于IP地址的处理，Boost.Asio提供了<em>ip::address , ip::address_v4</em>和<em>ip::address_v6</em>类。 它们提供了相当多的函数。下面列出了最重要的几个：</p>
-<ul>
-<li><em>ip::address(v4_or_v6_address)</em>:这个函数把一个v4或者v6的地址转换成<em>ip::address</em></li>
-<li><em>ip::address:from_string(str)</em>：这个函数根据一个IPv4地址（用.隔开的）或者一个IPv6地址（十六进制表示）创建一个地址。</li>
-<li><em>ip::address::to_string()</em> ：这个函数返回这个地址的字符串。</li>
-<li><em>ip::address_v4::broadcast([addr, mask])</em>:这个函数创建了一个广播地址 <em>ip::address_v4::any()</em>：这个函数返回一个能表示任意地址的地址。</li>
-<li><em>ip::address_v4::loopback(), ip_address_v6::loopback()</em>：这个函数返回环路地址（为v4&#x2F;v6协议）</li>
-<li><em>ip::host_name()</em>：这个函数用string数据类型返回当前的主机名。</li>
-</ul>
-<p>创建一个ip地址的例子：</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">&#x2F;&#x2F;旧版
-ip::address addr &#x3D; ip::address::from_string(&quot;127.0.0.1&quot;);
-&#x2F;&#x2F;新版
-ip::address addr &#x3D; asio::ip::make_address(&quot;127.0.0.1&quot;);</code></pre>
+int main() &#123;
+    std::cout &lt;&lt; &quot;GDB调试测试程序启动\n&quot;;
+    &#x2F;&#x2F; 场景1：变量和循环
+    int x &#x3D; 10;
+    int y &#x3D; 20;
+    int sum &#x3D; 0;
+    for (int i &#x3D; 0; i &lt; 5; ++i) &#123;
+        sum +&#x3D; x + y;
+    &#125;
+    std::cout &lt;&lt; &quot;Sum: &quot; &lt;&lt; sum &lt;&lt; std::endl;
+    &#x2F;&#x2F; 场景2：函数调用和递归
+    int fib &#x3D; fibonacci(5);
+    std::cout &lt;&lt; &quot;Fibonacci(5): &quot; &lt;&lt; fib &lt;&lt; std::endl;
+    &#x2F;&#x2F; 场景3：指针操作
+    int* ptr &#x3D; &amp;x;
+    modifyPointer(ptr);
+    std::cout &lt;&lt; &quot;修改后的x: &quot; &lt;&lt; x &lt;&lt; std::endl;
+    &#x2F;&#x2F; 场景4：容器操作
+    std::vector&lt;int&gt; vec &#x3D; &#123;1, 2, 3, 4, 5&#125;;
+    vec.push_back(100);
+    std::cout &lt;&lt; &quot;Vector size: &quot; &lt;&lt; vec.size() &lt;&lt; std::endl;
+    &#x2F;&#x2F; 场景5：故意触发段错误（取消注释后测试）
+    &#x2F;&#x2F; triggerSegfault();
+    std::cout &lt;&lt; &quot;程序正常结束\n&quot;;
+    return 0;
+&#125;
+&#x2F;&#x2F; 计算斐波那契数列（递归）
+int fibonacci(int n) &#123;
+    if (n &lt;&#x3D; 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+&#125;
+&#x2F;&#x2F; 修改指针指向的值
+void modifyPointer(int* ptr) &#123;
+    *ptr +&#x3D; 100;
+&#125;
+&#x2F;&#x2F; 触发段错误
+void triggerSegfault() &#123;
+    int* bad_ptr &#x3D; nullptr;
+    *bad_ptr &#x3D; 42; &#x2F;&#x2F; 写入空指针！
+&#125;</code></pre>
 
-<p>from_string无法使用域名来创建，比如：</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">&#x2F;&#x2F; 抛出异常
-ip::address addr &#x3D; ip::address::from_string(&quot;www.yahoo.com&quot;);</code></pre>
-
-<h4 id="3-端点"><a href="#3-端点" class="headerlink" title="3) 端点"></a>3) 端点</h4><p>端点是使用某个端口连接到的一个地址。不同类型的socket有它自己的<em>endpoint</em>类，比如<em>ip::tcp::endpoint、ip::udp::endpoint</em>和<em>ip::icmp::endpoint</em>。你可以简单理解计算机的一个端口，计网中用端口标识应用进程实现端到端的通信。</p>
-<p>创建一个连接到本机的80端口的端点，可以这样：</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">ip::tcp::endpoint ep( addr, 80);</code></pre>
-
-<p>有三种方式来让你建立一个端点：</p>
+<h2 id="启动GDB调试"><a href="#启动GDB调试" class="headerlink" title="启动GDB调试"></a>启动GDB调试</h2><p>GDB调试主要有三种方式，</p>
 <ul>
-<li><em>endpoint()</em>：这是默认构造函数，某些时候可以用来创建UDP&#x2F;ICMP socket。</li>
-<li><em>endpoint(protocol, port)</em>：这个方法通常用来创建可以接受新连接的服务器端socket。</li>
-<li><em>endpoint(addr, port)</em>:这个方法创建了一个连接到某个地址和端口的端点。</li>
+<li>直接调试目标代码： gdb .&#x2F;hello_gdb</li>
+<li>附加进程id： gdb attach pid</li>
+<li>调试core文件：gdb filename corename</li>
 </ul>
-<p>例子如下：</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">ip::tcp::endpoint ep1;
-ip::tcp::endpoint ep2(ip::tcp::v4(), 80);
-ip::tcp::endpoint ep3( addr, 80);</code></pre>
-
-<h4 id="4-套接字"><a href="#4-套接字" class="headerlink" title="4) 套接字"></a>4) 套接字</h4><p>套接字也就是socket，我们知道可以用ip+协议+端口来标识网络中的一个进程，所谓socket就是在应用层和传输层之间的一个抽象层，它把TCP&#x2F;IP层复杂的操作抽象为几个简单的接口供应用层调用已实现进程在网络中通信。</p>
-<p><img src="/2025/06/28/c-wang-luo-bian-cheng-asio/05225723-2ffa89aad91f46099afa530ef8660b20.jpg"></p>
-<p>Boost.Asio有三种类型的套接字类：<em>ip::tcp, ip::udp</em>和<em>ip::icmp</em>。<em>socket</em>类创建一个相应的<em>socket</em>。而且总是在构造的时候传入io_service实例：</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">io_context context;
-ip::udp::socket sock(service)
-sock.set_option(ip::udp::socket::reuse_address(true));</code></pre>
-
-<p>每一个socket的名字都是一个typedef关键字，tcp面向字节流，udp面向报文：</p>
-<ul>
-<li><em>ip::tcp::socket &#x3D; basic_stream_socket</em></li>
-<li><em>ip::udp::socket &#x3D; basic_datagram_socket</em></li>
-<li><em>ip::icmp::socket &#x3D; basic_raw_socket</em></li>
-</ul>
-<h4 id="5-socket成员函数"><a href="#5-socket成员函数" class="headerlink" title="5)socket成员函数"></a>5)socket成员函数</h4><p>函数很多，记不住，熟能生巧，记录当查阅用</p>
-<h3 id="·-接相关的函数"><a href="#·-接相关的函数" class="headerlink" title="· 接相关的函数"></a>· 接相关的函数</h3><p>这些方法是用来连接或绑定socket、断开socket字连接以及查询连接是活动还是非活动的：</p>
-<ul>
-<li><em>assign(protocol,socket)</em>：这个函数分配了一个原生的socket给这个socket实例。当处理老（旧）程序时会使用它（也就是说，原生socket已经被建立了）</li>
-<li><em>open(protocol)</em>：这个函数用给定的IP协议（v4或者v6）打开一个socket。你主要在UDP&#x2F;ICMP socket，或者服务端socket上使用。</li>
-<li><em>bind(endpoint)</em>：这个函数绑定到一个地址</li>
-<li><em>connect(endpoint)</em>：这个函数用同步的方式连接到一个地址</li>
-<li><em>async_connect(endpoint)</em>：这个函数用异步的方式连接到一个地址</li>
-<li><em>is_open()</em>：如果套接字已经打开，这个函数返回true</li>
-<li><em>close()</em>：这个函数用来关闭套接字。调用时这个套接字上任何的异步操作都会被立即关闭，同时返回<em>error::operation_aborted</em>错误码。</li>
-<li><em>shutdown(type_of_shutdown)</em>：这个函数立即使send或者receive操作失效，或者两者都失效。</li>
-<li><em>cancel()</em>：这个函数取消套接字上所有的异步操作。这个套接字上任何的异步操作都会立即结束，然后返回<em>error::operation_aborted</em>错误码。</li>
-</ul>
-<h3 id="读写函数"><a href="#读写函数" class="headerlink" title="读写函数"></a>读写函数</h3><p>这些是在套接字上执行I&#x2F;O操作的函数。</p>
-<p>对于异步函数来说，回调函数的格式*void handler(const boost::system::error_code&amp; e, size_t bytes)*都是一样的</p>
-<ul>
-<li><em>async_receive(buffer, [flags,] handler)</em>：这个函数启动从套接字异步接收数据的操作。</li>
-<li><em>async_read_some(buffer,handler)</em>：这个函数和*async_receive(buffer, handler)*功能一样。</li>
-<li><em>async_receive_from(buffer, endpoint[, flags], handler)</em>：这个函数启动从一个指定端点异步接收数据的操作。</li>
-<li><em>async_send(buffer [, flags], handler)</em>：这个函数启动了一个异步发送缓冲区数据的操作。</li>
-<li><em>async_write_some(buffer, handler)</em>：这个函数和a*sync_send(buffer, handler)*功能一致。</li>
-<li><em>async_send_to(buffer, endpoint, handler)</em>：这个函数启动了一个异步send缓冲区数据到指定端点的操作。</li>
-<li><em>receive(buffer [, flags])</em>：这个函数异步地从所给的缓冲区读取数据。在读完所有数据或者错误出现之前，这个函数都是阻塞的。</li>
-<li><em>read_some(buffer)</em>：这个函数的功能和*receive(buffer)*是一致的。</li>
-<li>receive_from(buffer, endpoint [, flags])*：这个函数异步地从一个指定的端点获取数据并写入到给定的缓冲区。在读完所有数据或者错误出现之前，这个函数都是阻塞的。</li>
-<li><em>send(buffer [, flags])</em>：这个函数同步地发送缓冲区的数据。在所有数据发送成功或者出现错误之前，这个函数都是阻塞的。</li>
-<li><em>write_some(buffer)</em>：这个函数和*send(buffer)*的功能一致。</li>
-<li><em>send_to(buffer, endpoint [, flags])</em>：这个函数同步地把缓冲区数据发送到一个指定的端点。在所有数据发送成功或者出现错误之前，这个函数都是阻塞的。</li>
-<li><em>available()</em>：这个函数返回有多少字节的数据可以无阻塞地进行同步读取。</li>
-</ul>
-<p>其中标记的默认值是0，但是也可以是以下几种：</p>
-<ul>
-<li><em>ip::socket_type::socket::message_peek</em>：这个标记只监测并返回某个消息，但是下一次读消息的调用会重新读取这个消息。</li>
-<li><em>ip::socket_type::socket::message_out_of_band</em>：这个标记处理带外（OOB）数据，OOB数据是被标记为比正常数据更重要的数据。关</li>
-<li><em>ip::socket_type::socket::message_do_not_route</em>：这个标记指定数据不使用路由表来发送。</li>
-<li><em>ip::socket_type::socket::message_end_of_record</em>：这个标记指定的数据标识了记录的结束。在Windows下不支持。</li>
-</ul>
-<h3 id="套接字控制"><a href="#套接字控制" class="headerlink" title="套接字控制"></a>套接字控制</h3><p>这些函数用来处理套接字的高级选项：</p>
-<ul>
-<li><em>get_io_service()</em>：这个函数返回构造函数中传入的io_service实例</li>
-<li><em>get_option(option)</em>：这个函数返回一个套接字的属性</li>
-<li><em>set_option(option)</em>：这个函数设置一个套接字的属性</li>
-<li><em>io_control(cmd)</em>：这个函数在套接字上执行一个I&#x2F;O指令</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>名字</th>
-<th>描述</th>
-<th>类型</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>broadcast</td>
-<td>如果为true，允许广播消息</td>
-<td>bool</td>
-</tr>
-<tr>
-<td>debug</td>
-<td>如果为true，启用套接字级别的调试</td>
-<td>bool</td>
-</tr>
-<tr>
-<td>do_not_route</td>
-<td>如果为true，则阻止路由选择只使用本地接口</td>
-<td>bool</td>
-</tr>
-<tr>
-<td>enable_connection_aborted</td>
-<td>如果为true，记录在accept()时中断的连接</td>
-<td>bool</td>
-</tr>
-<tr>
-<td>keep_alive</td>
-<td>如果为true，会发送心跳</td>
-<td>bool</td>
-</tr>
-<tr>
-<td>linger</td>
-<td>如果为true，套接字会在有未发送数据的情况下挂起close()</td>
-<td>bool</td>
-</tr>
-<tr>
-<td>receive_buffer_size</td>
-<td>套接字接收缓冲区大小</td>
-<td>int</td>
-</tr>
-<tr>
-<td>receive_low_watemark</td>
-<td>规定套接字输入处理的最小字节数</td>
-<td>int</td>
-</tr>
-<tr>
-<td>reuse_address</td>
-<td>如果为true，套接字能绑定到一个已用的地址</td>
-<td>bool</td>
-</tr>
-<tr>
-<td>send_buffer_size</td>
-<td>套接字发送缓冲区大小</td>
-<td>int</td>
-</tr>
-<tr>
-<td>send_low_watermark</td>
-<td>规定套接字数据发送的最小字节数</td>
-<td>int</td>
-</tr>
-<tr>
-<td>ip::v6_only</td>
-<td>如果为true，则只允许IPv6的连接</td>
-<td>bool</td>
-</tr>
-</tbody></table>
-<h3 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h3><p>其他与连接和I&#x2F;O无关的函数如下：</p>
-<ul>
-<li><em>local_endpoint()</em>：这个方法返回套接字本地连接的地址。</li>
-<li><em>remote_endpoint()</em>：这个方法返回套接字连接到的远程地址。</li>
-<li><em>native_handle()</em>：这个方法返回原始套接字的处理程序。你只有在调用一个Boost.Asio不支持的原始方法时才需要用到它。</li>
-<li><em>non_blocking()</em>：如果套接字是非阻塞的，这个方法返回true，否则false。</li>
-<li><em>native_non_blocking()</em>：如果套接字是非阻塞的，这个方法返回true，否则返回false。但是，它是基于原生的套接字来调用本地的api。所以通常来说，你不需要调用这个方法（non_blocking()已经缓存了这个结果）；你只有在直接调用native_handle()这个方法的时候才需要用到这个方法。</li>
-<li><em>at_mark()</em>：如果套接字要读的是一段OOB数据，这个方法返回true。这个方法你很少会用到。</li>
+<p>调试完成后可用q或ctrl+d退出调试，如果GDB attach某个进程，退出GDB之前要用命令 <strong>detach</strong> 解除附加进程。</p>
+<p><img src="/2025/07/02/ru-he-shi-yong-gdb/%7B221709D4-B608-461F-BD32-7E10EBEDFD8D%7D.png" alt="{221709D4-B608-461F-BD32-7E10EBEDFD8D}"></p>
+<h2 id="run命令-r"><a href="#run命令-r" class="headerlink" title="run命令(r)"></a>run命令(r)</h2><p>启动gdb调试后可使用run执行程序，</p>
+<p><img src="/.%5C%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8GDB%7B9EB12663-AFF4-404E-B3FE-DF021C1C5167%7D.png" alt="{9EB12663-AFF4-404E-B3FE-DF021C1C5167}"></p>
+<p>由于我未设置断点或者Ctrl + C 让GDB中断下来，所以程序完整允许结束。</p>
+<h2 id="break命令-b"><a href="#break命令-b" class="headerlink" title="break命令(b)"></a>break命令(b)</h2><p>break命令用于设置断点，常用方式包括：</p>
+<ol>
+<li>break function_name : 在指定函数处设置断点；</li>
+<li>break line_num : 在当前文件行号为line_num;处设置断点；</li>
+<li>break FileName:LineNo，在FileName文件行号为LineNo处添加一个断点；</li>
+<li>break FileName:FunctionName：在FileName文件的FunctionName函数的入口处添加断点；</li>
+<li>break -&#x2F;+offset：在当前程序暂停位置的前&#x2F;后 offset 行处下断点；</li>
+<li>break <location> if <condition>：下条件断点；</li>
+</ol>
+<h3 id="1）break-function-name"><a href="#1）break-function-name" class="headerlink" title="1）break function_name"></a>1）break function_name</h3><p><img src="/.%5C%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8GDB%7BD4A06A93-DEFF-4EF7-809E-9D41ABD3A08C%7D.png" alt="{D4A06A93-DEFF-4EF7-809E-9D41ABD3A08C}"></p>
+<p>此处我在main函数处设置了一个断点，run运行后会停止在main函数处，输入continue可继续运行程序。</p>
+<h3 id="2）break-line-num"><a href="#2）break-line-num" class="headerlink" title="2）break line_num"></a>2）break line_num</h3><p>通常是程序运行暂停时所在的文件，或通过 <code>list</code> 命令最后显示的文件的行号，可能会带有歧义，建议显式指定文件名。</p>
+<p><img src="/./%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8GDB/%7B592AAB61-05CC-4644-A3FB-973D3FA57437%7D.png" alt="{592AAB61-05CC-4644-A3FB-973D3FA57437}"></p>
+<h3 id="3）-break-filename-line-num"><a href="#3）-break-filename-line-num" class="headerlink" title="3） break filename:line_num"></a>3） break filename:line_num</h3><p><img src="/./%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8GDB/%7B2CAD5E09-30F5-40C2-9841-E42B54AFA9E4%7D.png" alt="{2CAD5E09-30F5-40C2-9841-E42B54AFA9E4}"></p>
+<h3 id="4）break-file-name-function-name"><a href="#4）break-file-name-function-name" class="headerlink" title="4）break file_name:function_name"></a>4）break file_name:function_name</h3><p><img src="/./%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8GDB/%7BDFCADD2A-BC2F-4362-8383-CAE334AC63B0%7D.png" alt="{DFCADD2A-BC2F-4362-8383-CAE334AC63B0}"></p>
+<h3 id="5）break-offset"><a href="#5）break-offset" class="headerlink" title="5）break -&#x2F;+offset"></a>5）break -&#x2F;+offset</h3><p>此处由于断点设置，程序停止在15行位置，我们就可以使用b +3在下第三行处设置一个断点</p>
+<p><img src="/./%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8GDB/%7B0B607073-6962-475E-B070-185C660B7384%7D.png" alt="{0B607073-6962-475E-B070-185C660B7384}"></p>
+<h3 id="6）break-…-if-cond"><a href="#6）break-…-if-cond" class="headerlink" title="6）break … if cond"></a>6）break … if cond</h3><p>可以在for循环中设置条件断点，让循环停在某次循环中。</p>
+<p><img src="/./%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8GDB/%7B091C06E9-8292-4561-B45E-47D0DCB0A472%7D.png" alt="{091C06E9-8292-4561-B45E-47D0DCB0A472}"></p>
+<h3 id="7-info-break、enable、disable和delete命令"><a href="#7-info-break、enable、disable和delete命令" class="headerlink" title="7) info break、enable、disable和delete命令"></a>7) info break、enable、disable和delete命令</h3><ul>
+<li><strong>info break</strong>，也可简写为 <strong>i b</strong>，作用是显示当前所有断点信息；</li>
+<li><strong>disable 断点编号</strong>，禁用某个断点，使得断点不会被触发；</li>
+<li><strong>enable 断点编号</strong>，启用某个被禁用的断点；</li>
+<li><strong>delete 断点编号</strong>，删除某个断点。</li>
 </ul>
 
                 
@@ -620,7 +498,7 @@ sock.set_option(ip::udp::socket::reuse_address(true));</code></pre>
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://syjerry.github.io/2025/06/28/c-wang-luo-bian-cheng-asio/">https://syjerry.github.io/2025/06/28/c-wang-luo-bian-cheng-asio/</a>
+                    <a href="https://syjerry.github.io/2025/07/02/ru-he-shi-yong-gdb/">https://syjerry.github.io/2025/07/02/ru-he-shi-yong-gdb/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -658,16 +536,12 @@ sock.set_option(ip::udp::socket::reuse_address(true));</code></pre>
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/C/">
-                                    <span class="chip bg-color">C++</span>
+                                <a href="/tags/GDB/">
+                                    <span class="chip bg-color">GDB</span>
                                 </a>
                             
-                                <a href="/tags/asio/">
-                                    <span class="chip bg-color">asio</span>
-                                </a>
-                            
-                                <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">
-                                    <span class="chip bg-color">网络编程</span>
+                                <a href="/tags/%E7%A8%8B%E5%BA%8F%E8%B0%83%E8%AF%95/">
+                                    <span class="chip bg-color">程序调试</span>
                                 </a>
                             
                         </div>
@@ -713,9 +587,64 @@ sock.set_option(ip::udp::socket::reuse_address(true));</code></pre>
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2025/07/02/ru-he-shi-yong-gdb/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="如何使用GDB">
+                        
+                        <span class="card-title">如何使用GDB</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2025-07-02
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/GDB/" class="post-category">
+                                    GDB
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/GDB/">
+                        <span class="chip bg-color">GDB</span>
+                    </a>
+                    
+                    <a href="/tags/%E7%A8%8B%E5%BA%8F%E8%B0%83%E8%AF%95/">
+                        <span class="chip bg-color">程序调试</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
             <div class="card">
                 <a href="/2025/07/01/cpp-sui-bi/">
                     <div class="card-image">
@@ -733,9 +662,9 @@ sock.set_option(ip::udp::socket::reuse_address(true));</code></pre>
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2025-07-01
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2025-07-01
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -755,43 +684,6 @@ sock.set_option(ip::udp::socket::reuse_address(true));</code></pre>
                         <span class="chip bg-color">C++</span>
                     </a>
                     
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2025/06/27/hello-world/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="hello world">
-                        
-                        <span class="card-title">hello world</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2025-06-27
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            Jerry Tang
-                            
-                        </span>
-                    </div>
                 </div>
                 
             </div>

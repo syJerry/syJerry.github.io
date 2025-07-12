@@ -331,10 +331,6 @@
                                 <span class="chip bg-color">C++</span>
                             </a>
                         
-                            <a href="/tags/C-%E6%96%B0%E7%89%B9%E6%80%A7/">
-                                <span class="chip bg-color">C++新特性</span>
-                            </a>
-                        
                     </div>
                     
                 </div>
@@ -365,7 +361,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    609
+                    1.8k
                 </div>
                 
 
@@ -441,6 +437,137 @@ constexpr std::vector&lt;int&gt; get_data() &#123;
 &#125;
 constexpr auto data &#x3D; get_data(); &#x2F;&#x2F; C++20 合法</code></pre>
 
+<h2 id="智能指针"><a href="#智能指针" class="headerlink" title="智能指针"></a>智能指针</h2><p>C++11引入了智能指针，使得程序员不必再管理指针的释放问题，常用的有三种智能指针，包括<strong>std::unique_ptr</strong><code>、</code><strong>std::shared_ptr</strong><code>和</code><strong>std::weak_ptr</strong>，智能指针其行为像指针，可以使用如*ptr解引用。</p>
+<h3 id="std-share-ptr"><a href="#std-share-ptr" class="headerlink" title="std::share_ptr"></a>std::share_ptr</h3><p>std::share_ptr<T>是一个类模板,它能记录有多少个对象共享管理指向的内存对象，多个std::share_ptr<T>可以指向同一块内存，当最后一个std::share_ptr<T>被销毁时内存随之释放。用户可使用make_share<T>函数来创建，其有共享特性，自然支持拷贝构造及拷贝赋值。通常用于创建资源比较耗时用于共享资源。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">&#x2F;&#x2F;使用方法
+std::share_ptr&lt;int&gt; int_ptr &#x3D; make_share(new int(42));
+std::share_ptr&lt;int&gt; int_ptr1(int_ptr);
+int i &#x3D; *int_ptr;
+auto int_ptr_2 &#x3D; int_ptr;
+int_ptr.get();&#x2F;&#x2F;当我们需要用到裸指针时可以使用get方法获取</code></pre>
+
+<h4 id="std-share-ptr原理"><a href="#std-share-ptr原理" class="headerlink" title="std::share_ptr原理"></a>std::share_ptr原理</h4><p>share_ptr内部维护两个指针，一个指向引用计数，一个指向资源。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">element_type*	   _M_ptr;         &#x2F;&#x2F; Contained pointer.
+__shared_count&lt;_Lp&gt;  _M_refcount;    &#x2F;&#x2F; Reference counter.</code></pre>
+
+<p>基于此项原理我们就可以实现一个简单的share_ptr:</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">template&lt;class T&gt;
+class SimpleSharePtr &#123;
+private:
+    T *res_;
+    int *ref_count_;
+public:
+    SimpleSharePtr();
+    explicit SimpleSharePtr(T *data_ptr);
+    SimpleSharePtr(const SimpleSharePtr&lt;T&gt; &amp;old_ptr);
+    SimpleSharePtr&lt;T&gt; &amp;operator&#x3D;(const SimpleSharePtr&lt;T&gt; &amp;old_ptr);
+    T&amp; operator*();
+    T* operator-&gt;();
+    ~SimpleSharePtr();
+    void release();
+    T *get();
+
+&#125;;
+template&lt;class T&gt;
+T *SimpleSharePtr&lt;T&gt;::operator-&gt;() &#123;
+    return res_;
+&#125;
+
+template&lt;class T&gt;
+T &amp;SimpleSharePtr&lt;T&gt;::operator*() &#123;
+    return *res_;
+&#125;
+
+template&lt;class T&gt;
+void SimpleSharePtr&lt;T&gt;::release() &#123;
+    (*ref_count_)--;
+    if (*ref_count_ &#x3D;&#x3D; 0) &#123;
+        delete res_;
+        delete ref_count_;
+    &#125;
+&#125;
+template&lt;class T&gt;
+SimpleSharePtr&lt;T&gt;::~SimpleSharePtr() &#123;
+    release();
+&#125;
+template&lt;class T&gt;
+T *SimpleSharePtr&lt;T&gt;::get() &#123;
+    return res_;
+&#125;
+template&lt;class T&gt;
+SimpleSharePtr&lt;T&gt; &amp;SimpleSharePtr&lt;T&gt;::operator&#x3D;(const SimpleSharePtr&lt;T&gt; &amp;old_ptr) &#123;
+    if (this !&#x3D; old_ptr) &#123;
+        release();
+        this-&gt;res_ &#x3D; old_ptr.res_;
+        this-&gt;ref_count_ &#x3D; old_ptr.ref_count_;
+        (*ref_count_)++;
+    &#125;
+    return *this;
+&#125;
+template&lt;class T&gt;
+SimpleSharePtr&lt;T&gt;::SimpleSharePtr(const SimpleSharePtr&lt;T&gt; &amp;old_ptr) &#123;
+    this-&gt;res_ &#x3D; old_ptr.res_;
+    (*(this-&gt;ref_count_))++;
+&#125;
+template&lt;class T&gt;
+SimpleSharePtr&lt;T&gt;::SimpleSharePtr(T *data_ptr) &#123;
+    res_ &#x3D; data_ptr;
+    ref_count_ &#x3D; new int(0);
+&#125;
+template&lt;class T&gt;
+SimpleSharePtr&lt;T&gt;::SimpleSharePtr() &#123;
+    res_ &#x3D; nullptr;
+    ref_count_ &#x3D; nullptr;
+&#125;
+</code></pre>
+
+<h3 id="std-unique-ptr"><a href="#std-unique-ptr" class="headerlink" title="std::unique_ptr"></a>std::unique_ptr</h3><p>顾名思义unique_ptr不支持多个对象指向同一块内存，自然也就不支持拷贝构造和拷贝赋值，但支持移动构造和移动赋值，比如</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">&#x2F;&#x2F;当函数参数为std::unique_ptr&lt;int&gt; ptr
+void test(std::unique_ptr&lt;int&gt; ptr)&#123;&#125;；
+&#x2F;&#x2F;程序调用时如果为
+test(ptr);&#x2F;&#x2F;编译报错,实际会调用其拷贝构造
+&#x2F;&#x2F;可以使用std::move,比如
+test(std::move(ptr));&#x2F;&#x2F;编译通过，调用移动构造
+</code></pre>
+
+<p>可使用std::make_unique创建，当其本身被删除释放时，相应内存也被释放。使用方法与shared_ptr类似。</p>
+<h3 id="std-weak-ptr"><a href="#std-weak-ptr" class="headerlink" title="std::weak_ptr"></a>std::weak_ptr</h3><p>weak_ptr是用来解决shared_ptr相互引用时的死锁问题,如果说两个shared_ptr相互引用,那么这两个指针的引用计数永远不可能下降为0,资源永远不会释放,比如下面定义两个类与测试函数：</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">class A;
+
+class B
+&#123;
+public:
+    ~B()
+    &#123;
+        std::cout &lt;&lt; &quot;B destory, a_ptr use_count:&quot; &lt;&lt; a_ptr.use_count() &lt;&lt; &quot;\n&quot;;
+    &#125;
+
+       std::shared_ptr&lt;A&gt; a_ptr; &#x2F;&#x2F;它会造成循环引用
+    &#x2F;&#x2F;std::weak_ptr&lt;A&gt; a_ptr;&#x2F;&#x2F;它不会循环引用
+&#125;;
+
+class A
+&#123;
+public:
+    ~A()
+    &#123;
+        std::cout &lt;&lt; &quot;A destory, b_ptr use_count:&quot; &lt;&lt; b_ptr.use_count() &lt;&lt; &quot;\n&quot;;
+    &#125;
+
+     std::shared_ptr&lt;B&gt; b_ptr;&#x2F;&#x2F;它会造成循环引用
+    &#x2F;&#x2F;std::weak_ptr&lt;B&gt; b_ptr;&#x2F;&#x2F;它不会循环引用
+&#125;;
+A* TestB()
+&#123;
+    std::shared_ptr&lt;A&gt; a(new A());
+    std::shared_ptr&lt;B&gt; b(new B());
+    a-&gt;b_ptr &#x3D; b;
+    b-&gt;a_ptr &#x3D; a;
+    return a.get();
+&#125;</code></pre>
+
+<p>类A有成员变量共享指针b,类B有成员变量共享指针a,可以分析TestB函数，当创建a时a引用计数为1，创建b时b引用计数为1,b赋值给a成员变量使得引用计数加1为2，同理a引用计数为2。那么当TestB执行完毕，对象a,b释放，导致引用计数减一，但此时两者引用计数均为1，也就不会调用相应析构函数导致内存泄漏。</p>
+<p>weak_ptr可以解决这个问题是因为<code>weak_ptr</code>对对象的一种弱引用，不会增加对象的引用计数，因为这个特性其自然不会独立存在，必须依赖于一个shared_ptr，与shared_ptr之间可以相互转化，shared_ptr可以直接赋值给它，它可以通过调用lock函数来获得shared_ptr。</p>
 
                 
             </div>
@@ -509,10 +636,6 @@ constexpr auto data &#x3D; get_data(); &#x2F;&#x2F; C++20 合法</code></pre>
                                     <span class="chip bg-color">C++</span>
                                 </a>
                             
-                                <a href="/tags/C-%E6%96%B0%E7%89%B9%E6%80%A7/">
-                                    <span class="chip bg-color">C++新特性</span>
-                                </a>
-                            
                         </div>
                     
                 </div>
@@ -556,18 +679,17 @@ constexpr auto data &#x3D; get_data(); &#x2F;&#x2F; C++20 合法</code></pre>
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2025/07/01/cpp-sui-bi/">
+                <a href="/2025/07/02/ru-he-shi-yong-gdb/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/16.jpg" class="responsive-img" alt="C++随笔">
+                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="如何使用GDB">
                         
-                        <span class="card-title">C++随笔</span>
+                        <span class="card-title">如何使用GDB</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -577,31 +699,30 @@ constexpr auto data &#x3D; get_data(); &#x2F;&#x2F; C++20 合法</code></pre>
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2025-07-01
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2025-07-02
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/C/" class="post-category">
-                                    C++
+                            <a href="/categories/GDB/" class="post-category">
+                                    GDB
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/C/">
-                        <span class="chip bg-color">C++</span>
+                    <a href="/tags/GDB/">
+                        <span class="chip bg-color">GDB</span>
                     </a>
                     
-                    <a href="/tags/C-%E6%96%B0%E7%89%B9%E6%80%A7/">
-                        <span class="chip bg-color">C++新特性</span>
+                    <a href="/tags/%E7%A8%8B%E5%BA%8F%E8%B0%83%E8%AF%95/">
+                        <span class="chip bg-color">程序调试</span>
                     </a>
                     
                 </div>
@@ -856,7 +977,7 @@ constexpr auto data &#x3D; get_data(); &#x2F;&#x2F; C++20 合法</code></pre>
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">3.7k</span>
+                        class="white-color">5.7k</span>
             
             
             
