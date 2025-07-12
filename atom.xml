@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Jerry</title>
+  
+  <subtitle>微云淡河汉，疏雨滴梧桐</subtitle>
+  <link href="https://syjerry.github.io/atom.xml" rel="self"/>
+  
+  <link href="https://syjerry.github.io/"/>
+  <updated>2025-07-03T06:40:14.946Z</updated>
+  <id>https://syjerry.github.io/</id>
+  
+  <author>
+    <name>Jerry Tang</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>如何使用GDB</title>
+    <link href="https://syjerry.github.io/2025/07/02/ru-he-shi-yong-gdb/"/>
+    <id>https://syjerry.github.io/2025/07/02/ru-he-shi-yong-gdb/</id>
+    <published>2025-07-02T01:43:17.000Z</published>
+    <updated>2025-07-03T06:40:14.946Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="GDB" scheme="https://syjerry.github.io/categories/GDB/"/>
+    
+    
+    <category term="GDB" scheme="https://syjerry.github.io/tags/GDB/"/>
+    
+    <category term="程序调试" scheme="https://syjerry.github.io/tags/%E7%A8%8B%E5%BA%8F%E8%B0%83%E8%AF%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>C++随笔</title>
+    <link href="https://syjerry.github.io/2025/07/01/cpp-sui-bi/"/>
+    <id>https://syjerry.github.io/2025/07/01/cpp-sui-bi/</id>
+    <published>2025-07-01T15:02:38.000Z</published>
+    <updated>2025-07-12T07:09:52.470Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;写在前面&quot;&gt;&lt;a href=&quot;#写在前面&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="C++" scheme="https://syjerry.github.io/categories/C/"/>
+    
+    
+    <category term="C++" scheme="https://syjerry.github.io/tags/C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>C++网络编程asio一</title>
+    <link href="https://syjerry.github.io/2025/06/28/c-wang-luo-bian-cheng-asio/"/>
+    <id>https://syjerry.github.io/2025/06/28/c-wang-luo-bian-cheng-asio/</id>
+    <published>2025-06-28T13:00:12.000Z</published>
+    <updated>2025-07-02T01:48:57.491Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;写在前面&quot;&gt;&lt;a href=&quot;#写在前面&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="C++网络编程" scheme="https://syjerry.github.io/categories/C-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"/>
+    
+    
+    <category term="C++" scheme="https://syjerry.github.io/tags/C/"/>
+    
+    <category term="asio" scheme="https://syjerry.github.io/tags/asio/"/>
+    
+    <category term="网络编程" scheme="https://syjerry.github.io/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>hello world</title>
+    <link href="https://syjerry.github.io/2025/06/27/hello-world/"/>
+    <id>https://syjerry.github.io/2025/06/27/hello-world/</id>
+    <published>2025-06-27T15:52:48.000Z</published>
+    <updated>2025-06-28T15:26:48.352Z</updated>
+    
+    
+    
+    
+    
+  </entry>
+  
+</feed>
