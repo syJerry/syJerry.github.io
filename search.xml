@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>OpenGL学习笔记1</title>
+      <link href="/2025/11/02/opengl-xue-xi-bi-ji/"/>
+      <url>/2025/11/02/opengl-xue-xi-bi-ji/</url>
+      
+        <content type="html"><![CDATA[<p>OpenGL是由开放组织规定的一组API和规范，该组织规定了该API的功能作用，但对于内部实现并不制定规范，故而OpenGL一般有各显卡厂商实现，所以不对显卡之间实现有所差异，当然作为用户我们不会感受到功能上的差异。</p><h1 id="1、核心模式和立即渲染模式"><a href="#1、核心模式和立即渲染模式" class="headerlink" title="1、核心模式和立即渲染模式"></a>1、核心模式和立即渲染模式</h1><p>早期OpenGL采用<strong>立即渲染模式</strong>，或称固定渲染管线，该模式绘图方便，但限制了开发者的自由，牺牲了灵活性。OpenGL3.2后开始废弃立即渲染模式，推出<strong>核心模式</strong>，核心模式下我们不得不使用现代的函数，需要更加深入了解图形编程，但有了更高的灵活性和效率。</p><h1 id="2、状态机"><a href="#2、状态机" class="headerlink" title="2、状态机"></a>2、状态机</h1><p>OpenGL就是一个巨大的<strong>状态机</strong>，由一系列变量描述OpenGL应当如何运行，而OpenGL的状态一般称为OpenGL的上下文(Context)。OpenGL的状态机概念是一个比较难以理解的概念，后续通过深入的学习会有更加深入的了解，同时知道状态机概念对于后续理解代码也非常有必要。</p><h1 id="3、GLFW"><a href="#3、GLFW" class="headerlink" title="3、GLFW"></a>3、GLFW</h1><p>GLFW是一个开源的C语言库，用于创建和管理窗口、处理用户输入以及管理图形上下文。OpenGL本身只是一套图形渲染API，并不包含窗口创建和输入处理功能。GLFW专门处理这些与操作系统相关的底层任务，让开发者能够专注于图形渲染逻辑本身。</p><h1 id="4、GLAD"><a href="#4、GLAD" class="headerlink" title="4、GLAD"></a>4、GLAD</h1><p>GLAD是一个开源的、轻量级的库，专门用于加载和管理OpenGL函数指针。它是一个OpenGL函数加载库。前文提到OpenGL只是一个规范，具体由显卡驱动厂商实现，由于驱动众多，许多函数难以在编译时确定，因而不得不在运行时查询，由此带来的代码将非常复杂。</p><pre class="language-c++" data-language="c++"><code class="language-c++">&#x2F;&#x2F; 定义函数原型typedef void (*GL_GENBUFFERS) (GLsizei, GLuint*);&#x2F;&#x2F; 找到正确的函数并赋值给函数指针GL_GENBUFFERS glGenBuffers  &#x3D; (GL_GENBUFFERS)wglGetProcAddress(&quot;glGenBuffers&quot;);&#x2F;&#x2F; 现在函数可以被正常调用了GLuint buffer;glGenBuffers(1, &amp;buffer);</code></pre><p>glad简化了查询流程，使得开发者仅需正常调用。当然前文提到的glfw和glad并非唯一选择。</p><h1 id="5、你好，窗口"><a href="#5、你好，窗口" class="headerlink" title="5、你好，窗口"></a>5、你好，窗口</h1><h2 id="创建窗口流程"><a href="#创建窗口流程" class="headerlink" title="创建窗口流程"></a>创建窗口流程</h2><h2 id="包含头文件"><a href="#包含头文件" class="headerlink" title="包含头文件"></a>包含头文件</h2><pre class="language-c++" data-language="c++"><code class="language-c++">#include &lt;glad&#x2F;glad.h&gt;#include &lt;GLFW&#x2F;glfw3.h&gt;</code></pre><p>首先需要包含前文提到两个库的头文件，需要注意的是glad会引入许多其他OpenGL必要的头文件，所以在包含其他需要依赖于OpenGL头文件前保证包含了glad。</p><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>首先使用以下代码进行初始化，</p><pre class="language-c++" data-language="c++"><code class="language-c++">glfwInit();glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);glfwWindowHint(GLFW_RESIZABLE,GLFW_FALSE);</code></pre><p>glfwInit()函数用以初始化glfw，glfwWindowHint函数用以通过枚举值来设置参数，如opengl主次版本号3.3，设置渲染模式为核心渲染模式，以及能否窗口大小能否调整。</p><h2 id="创建窗口对象"><a href="#创建窗口对象" class="headerlink" title="创建窗口对象"></a>创建窗口对象</h2><pre class="language-c++" data-language="c++"><code class="language-c++">GLFWwindow* window &#x3D; glfwCreateWindow(800,600,&quot;opengl_learn&quot;, nullptr, nullptr);if(window &#x3D;&#x3D; nullptr)&#123;    std::cout&lt;&lt;&quot;creat window error!&quot;&lt;&lt;std::endl;    return -1;&#125;glfwMakeContextCurrent(window);gladLoadGL();</code></pre><p>glfwCreateWindow用以创建窗口对象，前三个参数分别为宽，高，窗口名。并通过glfwMakeContextCurrent函数将窗口设置为当前上下文。</p><p>前文提到glad用以加载opengl函数，故需要使用gladLoadGL函数进行初始化，注意必须在设置上下文之后才能初始化，其因在于glad加载函数需要确定上下文，也就是确定向那个设备获取函数。</p><h2 id="视口-viewport"><a href="#视口-viewport" class="headerlink" title="视口(viewport)"></a>视口(viewport)</h2><p>视口用以告诉OpenGL渲染窗口的大小，注意与前文创建的窗口对象作区分，也就是说你可以仅在窗口中的一部分进行渲染，类似小屏播放。</p><pre class="language-c++" data-language="c++"><code class="language-c++">int width &#x3D; 0;int height &#x3D; 0;glfwGetFramebufferSize(window,&amp;width,&amp;height);glViewport(0,0,width,height);</code></pre><p>事实上一个窗口每一次渲染的数据可以构成一个缓冲区，所以窗口对象的宽高可以视为这个缓冲区的大小，glfwGetFramebufferSize函数便是获取帧缓冲区的大小。而glViewport用以设置渲染窗口的大小，参数为（左下角坐标，宽高）。</p><h2 id="双缓冲"><a href="#双缓冲" class="headerlink" title="双缓冲"></a>双缓冲</h2><p>“应用程序使用单缓冲绘图时可能会存在图像闪烁的问题。 这是因为生成的图像不是一下子被绘制出来的，而是按照从左到右，由上而下逐像素地绘制而成的。最终图像不是在瞬间显示给用户，而是通过一步一步生成的，这会导致渲染的结果很不真实。<br>应用双缓冲渲染窗口应用程序。前缓冲保存着最终输出的图像，它会在屏幕上显示；而所有的的渲染指令都会在后缓冲上绘制。当所有的渲染指令执行完毕后，我们交换(Swap)前缓冲和后缓冲，这样图像就立即呈显出来，之前提到的不真实感就消除了。”</p><h2 id="设置回调"><a href="#设置回调" class="headerlink" title="设置回调"></a>设置回调</h2><p>我们可以通过设置回调函数来处理一些事件，比如键盘控制。每一种回调函数都有规范定义，以键盘事件回调为例<br>void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)</p><table><thead><tr><th>window</th><th>窗口对象</th></tr></thead><tbody><tr><td>key</td><td>按下的键</td></tr><tr><td>scancode</td><td>键盘的物理位置，主要处理不同国家的布局</td></tr><tr><td>action</td><td>按下还是松开</td></tr><tr><td>mode</td><td>Ctrl、Shift、Alt、Super</td></tr><tr><td>通过glfwSetKeyCallback函数设置回调，可以使用lamuda表达式定义回调</td><td></td></tr></tbody></table><pre class="language-C++" data-language="C++"><code class="language-C++">glfwSetKeyCallback(window,                   [](GLFWwindow *window, int key, int scancode,                                int action, int mode) &#123;                       if (key &#x3D;&#x3D; GLFW_KEY_ESCAPE &amp;&amp; action &#x3D;&#x3D; GLFW_PRESS) &#123;                           glfwSetWindowShouldClose(window, GLFW_TRUE);                       &#125;                   &#125;);</code></pre><h2 id="渲染"><a href="#渲染" class="headerlink" title="渲染"></a>渲染</h2><p>要把所有的渲染(Rendering)操作放到游戏循环中，因为我们想让这些渲染指令在每次游戏循环迭代的时候都能被执行。<br>在每个新的渲染迭代开始的时候我们总是希望清屏，否则我们仍能看见上一次迭代的渲染结果，我们可以定义一个颜色清屏，然后通过glClear函数清空屏幕缓冲，当然不仅仅是颜色还有深度，掩码，GL_COLOR_BUFFER_BIT，GL_DEPTH_BUFFER_BIT和GL_STENCIL_BUFFER_BIT。</p><pre class="language-c++" data-language="c++"><code class="language-c++">while (!glfwWindowShouldClose(window)) &#123;    glfwPollEvents();    glfwSwapBuffers(window);    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);    glClear(GL_COLOR_BUFFER_BIT);&#125;</code></pre><h2 id="释放资源"><a href="#释放资源" class="headerlink" title="释放资源"></a>释放资源</h2><p>最后需要释放分配给GLFW的内存</p><pre class="language-C++" data-language="C++"><code class="language-C++">glfwTerminate();</code></pre>]]></content>
+      
+      
+      <categories>
+          
+          <category> OpnGL </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> C++ </tag>
+            
+            <tag> OpencGL </tag>
+            
+            <tag> 游戏引擎 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>如何使用GDB</title>
       <link href="/2025/07/02/ru-he-shi-yong-gdb/"/>
       <url>/2025/07/02/ru-he-shi-yong-gdb/</url>
@@ -13,7 +42,7 @@
       
       <categories>
           
-          <category> GDB </category>
+          <category> 学习记录 </category>
           
       </categories>
       
@@ -65,7 +94,7 @@
       
       <categories>
           
-          <category> C++网络编程 </category>
+          <category> 学习记录 </category>
           
       </categories>
       

@@ -6,7 +6,7 @@
   <link href="https://syjerry.github.io/atom.xml" rel="self"/>
   
   <link href="https://syjerry.github.io/"/>
-  <updated>2025-07-03T06:40:14.946Z</updated>
+  <updated>2025-11-02T14:10:29.843Z</updated>
   <id>https://syjerry.github.io/</id>
   
   <author>
@@ -17,11 +17,41 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>OpenGL学习笔记1</title>
+    <link href="https://syjerry.github.io/2025/11/02/opengl-xue-xi-bi-ji/"/>
+    <id>https://syjerry.github.io/2025/11/02/opengl-xue-xi-bi-ji/</id>
+    <published>2025-11-02T11:40:29.000Z</published>
+    <updated>2025-11-02T14:10:29.843Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;OpenGL是由开放组织规定的一组API和规范，该组织规定了该API的功能作用，但对于内部实现并不制定规范，故而OpenGL一般有各显卡厂商实现，所以不对显卡之间实现有所差异，当然作为用户我们不会感受到功能上的差异。&lt;/p&gt;
+&lt;h1</summary>
+        
+      
+    
+    
+    
+    <category term="OpnGL" scheme="https://syjerry.github.io/categories/OpnGL/"/>
+    
+    
+    <category term="C++" scheme="https://syjerry.github.io/tags/C/"/>
+    
+    <category term="OpencGL" scheme="https://syjerry.github.io/tags/OpencGL/"/>
+    
+    <category term="游戏引擎" scheme="https://syjerry.github.io/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/"/>
+    
+  </entry>
+  
+  <entry>
     <title>如何使用GDB</title>
     <link href="https://syjerry.github.io/2025/07/02/ru-he-shi-yong-gdb/"/>
     <id>https://syjerry.github.io/2025/07/02/ru-he-shi-yong-gdb/</id>
     <published>2025-07-02T01:43:17.000Z</published>
-    <updated>2025-07-03T06:40:14.946Z</updated>
+    <updated>2025-11-02T11:43:59.416Z</updated>
     
     
       
@@ -34,7 +64,7 @@
     
     
     
-    <category term="GDB" scheme="https://syjerry.github.io/categories/GDB/"/>
+    <category term="学习记录" scheme="https://syjerry.github.io/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/"/>
     
     
     <category term="GDB" scheme="https://syjerry.github.io/tags/GDB/"/>
@@ -73,7 +103,7 @@
     <link href="https://syjerry.github.io/2025/06/28/c-wang-luo-bian-cheng-asio/"/>
     <id>https://syjerry.github.io/2025/06/28/c-wang-luo-bian-cheng-asio/</id>
     <published>2025-06-28T13:00:12.000Z</published>
-    <updated>2025-07-02T01:48:57.491Z</updated>
+    <updated>2025-11-02T11:44:13.613Z</updated>
     
     
       
@@ -86,7 +116,7 @@
     
     
     
-    <category term="C++网络编程" scheme="https://syjerry.github.io/categories/C-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"/>
+    <category term="学习记录" scheme="https://syjerry.github.io/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/"/>
     
     
     <category term="C++" scheme="https://syjerry.github.io/tags/C/"/>
